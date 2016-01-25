@@ -66,7 +66,7 @@ def four_planes_intersection(plane_eq_1, plane_eq_2, plane_eq_3, plane_eq_4):
     
 
 def flow(mesh_id=None, step=1):
-    """Preforms one step of the harmonic flow of the given mesh,
+    """Preforms one step of the face flow of the given mesh,
     replacing that mesh with a new one.
     """
     # If mesh_id is None, get the mesh from the user.

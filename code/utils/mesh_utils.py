@@ -29,7 +29,8 @@ def add_cube(side=1):
 
 def get_face_points(mesh_id, face_index):
     """Returns a list of vertices that define the given face. The face_index argument
-    should correspond to the order of faces as returned from rs.MeshFaceVertices()."""
+    should correspond to the order of faces as returned from rs.MeshFaceVertices().
+    """
     vertices = rs.MeshVertices(mesh_id)
     face_vertices = rs.MeshFaceVertices(mesh_id)
     return [vertices[i] for i in face_vertices[face_index]]
