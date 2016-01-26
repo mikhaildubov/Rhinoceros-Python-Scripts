@@ -5,6 +5,33 @@ from utils import mesh_utils as mu
 """ Harmonic Flow a.k.a. Mean Curvature Flow (MCF) """
 
 
+def flow(mesh_id=None, step=1):
+    """Performs one step of the harmonic flow of the given mesh,
+    replacing that mesh with a new one.
+    """
+    # TODO(mikhaildubov): This flow results in a degenerate case at the poles of sphere86.3dm.
+    #                     Fix this by making it a true MCF (i.e. by using the angles).
+    
+    # If mesh_id is None, then get the mesh from the user.
+    # Check that all its faces are correctly set up.
+    mesh_id = mu.get_and_check_mesh(mesh_id)
+    
+    # Various precomputations (including motion vectors for each vertex)
+    v = rs.MeshVertices(mesh_id)
+    n = len(v)
+    harmonic_vectors = get_motion_vectors(mesh_id, step)
+    
+    # Move each vertex by its motion vector
+    new_vertices = []
+    for i in xrange(n):
+        new_vertices.append(rs.PointAdd(v[i], harmonic_vectors[i]))
+
+    # Update the mesh
+    new_mesh_id = rs.AddMesh(new_vertices, rs.MeshFaceVertices(mesh_id))
+    rs.DeleteObject(mesh_id)
+    return new_mesh_id
+
+
 def adjacency_list(mesh_id):
     """Builds an adjacency list of the mesh, taking O(|V|+|E|) space."""
     n = rs.MeshVertexCount(mesh_id)
@@ -63,30 +90,3 @@ def draw_motion_vectors(mesh_id=None, step=1):
     n = len(v)
     for i in xrange(n):
         vu.VectorDraw(harmonic_vectors[i], v[i])
-
-
-def flow(mesh_id=None, step=1):
-    """Performs one step of the harmonic flow of the given mesh,
-    replacing that mesh with a new one.
-    """
-    # TODO(mikhaildubov): This flow results in a degenerate case at the poles of sphere86.3dm.
-    #                     Fix this by making it a true MCF (i.e. by using the angles).
-    
-    # If mesh_id is None, get the mesh from the user.
-    # Check that all its faces are correctly set up.
-    mesh_id = mu.get_and_check_mesh(mesh_id)
-    
-    # Various precomputations (including motion vectors for each vertex)
-    v = rs.MeshVertices(mesh_id)
-    n = len(v)
-    harmonic_vectors = get_motion_vectors(mesh_id, step)
-    
-    # Move each vertex by its motion vector
-    new_vertices = []
-    for i in xrange(n):
-        new_vertices.append(rs.PointAdd(v[i], harmonic_vectors[i]))
-
-    # Update the mesh
-    new_mesh_id = rs.AddMesh(new_vertices, rs.MeshFaceVertices(mesh_id))
-    rs.DeleteObject(mesh_id)
-    return new_mesh_id
