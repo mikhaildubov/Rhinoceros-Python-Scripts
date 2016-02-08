@@ -20,8 +20,8 @@ if __name__ == '__main__':
 
     # Harmonic flow (Mean Curvature flow)
     #harmonic_flow.draw_motion_vectors(step=10)
-    #flow_utils.iterate(harmonic_flow.flow, 200, step=0.05)
+    #flow_utils.iterate(harmonic_flow.flow, 100, step=0.05)
 
     # Face flow
     #face_flow.draw_motion_vectors(step=10)
-    flow_utils.iterate(face_flow.flow, 200, step=0.05)
+    flow_utils.iterate(face_flow.flow, 100, step=0.05)

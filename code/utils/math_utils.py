@@ -54,3 +54,6 @@ def solve_sle(A):
         for k in range(i-1, -1, -1):
             A[k][n] -= A[k][i] * x[i]
     return x
+
+def is_approx_zero(number):
+    return abs(number) < 1e-3

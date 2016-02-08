@@ -32,16 +32,8 @@ def flow(mesh_id=None, step=1):
     for i in xrange(n):
         adj_planes = [face_planes_translated[j] for j in adj_faces[i]]
         adj_planes_eq = [rs.PlaneEquation(plane) for plane in adj_planes]
-        if len(adj_planes) == 3:
-            intersection_point = three_planes_intersection(*adj_planes_eq)
-            new_vertices.append(intersection_point)
-        elif len(adj_planes) == 4:
-            # TODO(mikhaildubov): Check somehow that this intersection is actually possible.
-            intersection_point = four_planes_intersection(*adj_planes_eq)
-            new_vertices.append(intersection_point)
-        else:
-            # NOTE(mikhaildubov): We only support cases when each vertex has <= 4 adjacent planes.
-            raise NotImplementedError()
+        intersection_point = planes_intersection(adj_planes_eq)
+        new_vertices.append(intersection_point)
 
     # Update the mesh
     new_mesh_id = rs.AddMesh(new_vertices, rs.MeshFaceVertices(mesh_id))
@@ -92,17 +84,30 @@ def adjacent_faces(mesh_id):
     return adjacency_list
 
     
-def three_planes_intersection(plane_eq_1, plane_eq_2, plane_eq_3):
-    """Computes the intersection point for 3 planes."""
-    matrix = [
-        [plane_eq_1[0], plane_eq_1[1], plane_eq_1[2], -plane_eq_1[3]],
-        [plane_eq_2[0], plane_eq_2[1], plane_eq_2[2], -plane_eq_2[3]],
-        [plane_eq_3[0], plane_eq_3[1], plane_eq_3[2], -plane_eq_3[3]],
-    ]
-    return maths.solve_sle(matrix)
+def planes_intersection(plane_eqs):
+    """Computes the intersection point for n >= 3 planes."""
 
-    
-def four_planes_intersection(plane_eq_1, plane_eq_2, plane_eq_3, plane_eq_4):
-    """Computes the intersection point for 4 planes."""
-    # TODO(mikhaildubov): Implement this
-    raise NotImplementedError()
+    if len(plane_eqs) < 3:
+        raise Exception("There should be at least 3 planes to calculate their intersection point.")
+
+    # Compute the intersection of the first three planes.
+    matrix = [
+        [plane_eqs[0][0], plane_eqs[0][1], plane_eqs[0][2], -plane_eqs[0][3]],
+        [plane_eqs[1][0], plane_eqs[1][1], plane_eqs[1][2], -plane_eqs[1][3]],
+        [plane_eqs[2][0], plane_eqs[2][1], plane_eqs[2][2], -plane_eqs[2][3]],
+    ]
+    # NOTE(mikhaildubov): As we are working with mesh geometry, we can be sure there are
+    #                     no major degeneracies (like three planes intersecting in a line).
+    intersection_candidate = maths.solve_sle(matrix)
+
+    # Check that the rest of the planes are compatible with this intersection.
+    for plane_eq in plane_eqs[3:]:
+        if not plane_contains(plane_eq, intersection_candidate):
+            raise Exception("The motion of planes is incompatible")
+    return intersection_candidate
+
+
+def plane_contains(plane_eq, point):
+    return maths.is_approx_zero(plane_eq[0]*point[0] + plane_eq[1]*point[1] +
+                                plane_eq[2]*point[2] + plane_eq[3])
+
