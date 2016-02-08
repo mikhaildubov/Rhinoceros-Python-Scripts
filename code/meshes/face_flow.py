@@ -104,10 +104,11 @@ def planes_intersection(plane_eqs):
     for plane_eq in plane_eqs[3:]:
         if not plane_contains(plane_eq, intersection_candidate):
             raise Exception("The motion of planes is incompatible")
+
     return intersection_candidate
 
 
 def plane_contains(plane_eq, point):
-    return maths.is_approx_zero(plane_eq[0]*point[0] + plane_eq[1]*point[1] +
-                                plane_eq[2]*point[2] + plane_eq[3])
+    return maths.is_approx_zero(plane_eq[0] * point[0] + plane_eq[1] * point[1] +
+                                plane_eq[2] * point[2] + plane_eq[3])
 

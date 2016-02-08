@@ -9,7 +9,7 @@ def flow(mesh_id=None, step=1):
     """Performs one step of the harmonic flow of the given mesh,
     replacing that mesh with a new one.
     """
-    # TODO(mikhaildubov): This flow results in a degenerate case at the poles of sphere86.3dm.
+    # TODO(mikhaildubov): This flow results in a degenerate case at the poles of sphere134.3dm.
     #                     Fix this by making it a true MCF (i.e. by using the angles).
     
     # If mesh_id is None, then get the mesh from the user.
