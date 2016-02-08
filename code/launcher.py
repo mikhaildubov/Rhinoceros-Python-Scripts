@@ -9,12 +9,12 @@ import rhinoscriptsyntax as rs
 if __name__ == '__main__':
     # NOTE(mikhaildubov): The code to be executed in Rhinoceros should go here.
     #
-    #                     To launch any of the commands below:
-    #                       1. Load the corresponding shape (curve/mesh) to Rhinoceros
-    #                       2. Type "_EditPythonScript" in the command prompt of Rhinoceros
-    #                       3. Load & run this python module
-    #                       4. Click on the shape loaded to the Rhinoceros editor
-    #                          to apply the corresponding transformation to it.
+    # To launch any of the commands below:
+    #   1. Load the shape you want to transform (curve/mesh) to Rhinoceros
+    #   2. Type "_EditPythonScript" in the command prompt of Rhinoceros
+    #   3. Load & run this python module
+    #   4. Click on the shape loaded to the Rhinoceros editor
+    #      to apply the corresponding transformation to it.
 
     # MESHES
 
