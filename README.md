@@ -1,4 +1,4 @@
-# Rhinoceros-Python-Scripts
+# Rhinoceros Python Scripts
 A set of RhinoPython scripts for various transformations (flows) of 2D and 3D objects.
 
 
@@ -25,3 +25,7 @@ To launch it:
 These scripts have been developed and tested on Rhinoceros 5 for Windows;
 there may be some issues with running the same code on Rhinoceros 5 for Mac.
 You are welcome to report any of them on GitHub.
+
+## References
+- [Rhino Python Programmer's Reference](http://4.rhino3d.com/5/ironpython/index.html)
+- [Pascal Romon - Introduction à la géométrie différentielle discrète](http://www.amazon.fr/Introduction-%C3%A0-G%C3%A9ometrie-Diff%C3%A9rentielle-Discr%C3%A8te/dp/272988307X)
