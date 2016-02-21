@@ -23,10 +23,13 @@ To launch it:
 
 
 ## Examples
-Here is how face flows of a cube, a dipyramid, and a sphere look like:
+Here is how harmonic flows and face flows of a cube, a dipyramid, and a sphere look like. The harmonic flows are presented on the left while face flows are on the right:
 
-| ![Face flow of a cube](https://cloud.githubusercontent.com/assets/1047242/12933753/1f099916-cf8a-11e5-84c5-1d7d4d792ada.gif) | ![Face flow of a dipyramid](https://cloud.githubusercontent.com/assets/1047242/12933754/1f0da31c-cf8a-11e5-82c0-564188120654.gif) | ![Face flow of a sphere](https://cloud.githubusercontent.com/assets/1047242/12933755/1f12fc2c-cf8a-11e5-92ec-f8397e0c8554.gif) |
-|------------------------------------------------------------------------------------------------------------------------------|-----------------------------------------------------------------------------------------------------------------------------------|--------------------------------------------------------------------------------------------------------------------------------|
+|                                                             **Harmonic flow**                                                             |                                                             **Face flow**                                                             |
+|:-------------------------------------------------------------------------------------------------------------------------------------:|:---------------------------------------------------------------------------------------------------------------------------------:|
+| ![Harmonic flow of a cube](https://cloud.githubusercontent.com/assets/1047242/13200353/319d6496-d844-11e5-9ad6-e5317edb81d6.gif)      | ![Face flow of a cube](https://cloud.githubusercontent.com/assets/1047242/13200352/31996be8-d844-11e5-926f-587c97803682.gif)      |
+| ![Harmonic flow of a dipyramid](https://cloud.githubusercontent.com/assets/1047242/13200355/319ee654-d844-11e5-8fd4-b51797d5a2fe.gif) | ![Face flow of a dipyramid](https://cloud.githubusercontent.com/assets/1047242/13200354/319da744-d844-11e5-9c2f-9d462ef80af8.gif) |
+| ![Harmonic flow of a sphere](https://cloud.githubusercontent.com/assets/1047242/13200357/31a48244-d844-11e5-8764-fbcb19464d80.gif)    | ![Face flow of a sphere](https://cloud.githubusercontent.com/assets/1047242/13200356/31a3ae00-d844-11e5-8832-d085dcaaaf6a.gif)    |
 
 
 ## Dependencies
