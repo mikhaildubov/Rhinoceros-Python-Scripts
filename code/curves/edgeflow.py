@@ -2,8 +2,10 @@
 # Mikhail Dubov
 # 2015-11-24
 
-from math import radians, pi, sin, tan, degrees
+from math import pi, sin, tan, degrees
 import rhinoscriptsyntax as rs
+
+from utils import vector_utils as vu
 
 
 # Some shortcuts for vector operations to improve code readability
@@ -12,10 +14,7 @@ subtract = rs.VectorSubtract
 scale = rs.VectorScale
 rev = rs.VectorReverse
 length = rs.VectorLength
-
-def angle(v1, v2):
-    # rs.VectorAngle returns degrees which is not very convenient
-    return radians(rs.VectorAngle(v1, v2))
+angle = vu.VectorAngleRadians
 
 
 def AddVector(vecdir, base_point=None):

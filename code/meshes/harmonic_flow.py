@@ -1,6 +1,8 @@
 import rhinoscriptsyntax as rs
-from utils import vector_utils as vu
+
+from utils.math_utils import cotan
 from utils import mesh_utils as mu
+from utils import vector_utils as vu
 
 """ Harmonic Flow a.k.a. Mean Curvature Flow (MCF) """
 
@@ -48,38 +50,82 @@ def adjacency_list(mesh_id):
     return adj
 
 
+def vertex_face_index(mesh_id):
+    """Returns an auxiliary index containing sets of adjacent faces for each vertex."""
+    n = rs.MeshVertexCount(mesh_id)
+    adj = [set() for _ in xrange(n)]
+    for face_index, face_vertices in enumerate(rs.MeshFaceVertices(mesh_id)):
+        for vertex_index in face_vertices:
+            adj[vertex_index].add(face_index)
+    return adj
+
+
+def get_adjacent_vertices_in_order(mesh_id, adj_list, vertex_face_ind, i):
+    adj_vertices = adj_list[i].copy()
+    adj_vertices_in_order = [adj_vertices.pop()]
+    face_vertices = rs.MeshFaceVertices(mesh_id)
+
+    def get_next_vertex(last_vertex):
+        for adj_face in vertex_face_ind[last_vertex]:
+            for vertex in face_vertices[adj_face]:
+                if vertex in adj_vertices:
+                    return vertex
+        # NOTE(mikhaildubov): Depending on the mesh, we may need to get the last one manually
+        #                     (e.g. this is the case for a dipyramid).
+        return list(adj_vertices)[0]
+
+    while adj_vertices:
+        last_vertex = adj_vertices_in_order[-1]
+        next_vertex = get_next_vertex(last_vertex)
+        adj_vertices.remove(next_vertex)
+        adj_vertices_in_order.append(next_vertex)
+        last_vertex = next_vertex
+
+    return adj_vertices_in_order
+
+
 def get_motion_vectors(mesh_id, step):
     """Returns a list of motion vectors in the same order as the vertices in the
     Rhino representation of the input mesh. Uses adjacency list instead of adjacency
     matrix, thus improving the running time from O(|V|^2) to O(|V|+|E|).
     """
     adj_list = adjacency_list(mesh_id)
+    vertex_face_ind = vertex_face_index(mesh_id)
     v = rs.MeshVertices(mesh_id)
     n = len(v)
     harmonic_vectors = []
     for i in xrange(n):
+        p = v[i]
         # Initialize the harmonic vector as a zero vector
         harmonic_vector = rs.VectorCreate([0, 0, 0], [0, 0, 0])
         # Sum up all the vectors pointing to adjacent vertices
-        adj = get_adjacent_vertices_in_order(adj_list, i)
+        adj = get_adjacent_vertices_in_order(mesh_id, adj_list, vertex_face_ind, i)
         for j in xrange(len(adj)):
-            prev = v[adj[(j - 1) % len(adj)]]
-            curr = v[adj[j]]
-            next = v[adj[(j + 1) % len(adj)]]
-            pq = rs.VectorCreate(curr, v[i])
-            # TODO: the cotangent formula should go here
-            harmonic_vector = rs.VectorAdd(harmonic_vector, pq)
-        # Reverse & rescale
-        harmonic_vector = rs.VectorReverse(harmonic_vector)
+            # q_j vertices
+            q_prev = v[adj[(j - 1) % len(adj)]]
+            q_curr = v[adj[j]]
+            q_next = v[adj[(j + 1) % len(adj)]]
+            # pq vectors
+            pq_prev = rs.VectorCreate(q_prev, p)
+            pq = rs.VectorCreate(q_curr, p)
+            pq_next = rs.VectorCreate(q_next, p)
+            # vectors between q vertices
+            q_prev_q_curr = rs.VectorCreate(q_curr, q_prev)
+            q_next_q_curr = rs.VectorCreate(q_curr, q_next)
+            # Angles needed for MCF
+            alpha = vu.VectorAngleRadians(rs.VectorReverse(pq), q_prev_q_curr)
+            beta = vu.VectorAngleRadians(rs.VectorReverse(pq), q_next_q_curr)
+            # Continue computing the sum for the harmonic vector
+            # TODO(mikhaildubov): The formula with cotangents fails on sphere134.3dm.
+            #                     Check it and also ensure that the input mesh is triangulated.
+            harmonic_coeff = 1 #(cotan(alpha) + cotan(beta)) / 2
+            harmonic_vector = rs.VectorScale(rs.VectorAdd(harmonic_vector, pq), harmonic_coeff)
+        # Rescale
+        # TODO(mikhaildubov): use this for true MCF:
+        #harmonic_vector = rs.VectorScale(harmonic_vector, step)
         harmonic_vector = vu.VectorResize(harmonic_vector, step)
         harmonic_vectors.append(harmonic_vector)
     return harmonic_vectors
-
-
-def get_adjacent_vertices_in_order(adj_list, i):
-    # TODO: This is a stub
-    # TODO: Consider building the list in order right from the beginning?
-    return list(adj_list[i])
 
 
 def draw_motion_vectors(mesh_id=None, step=1):

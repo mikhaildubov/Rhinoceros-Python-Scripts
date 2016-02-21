@@ -55,6 +55,7 @@ def isometricflow(polyline=None, t=0.1):
         
         for a in angles:
             a = a - t * (a - angles_sum / n)
+            # TODO(mikhaildubov): This is a dead piece of code
             
         prev_edge = subtract(vertices[1], vertices[0])
         newvertices = [vertices[0]]

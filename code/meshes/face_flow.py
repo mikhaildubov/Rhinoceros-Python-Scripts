@@ -47,7 +47,7 @@ def get_motion_vectors(mesh_id, step):
     """
     normals = rs.MeshFaceNormals(mesh_id)
     for i in xrange(len(normals)):
-        normals[i] = vu.VectorResize(normals[i], step)
+        normals[i] = vu.VectorResize(normals[i], -step)
     return normals
 
 
@@ -70,17 +70,26 @@ def adjacent_faces(mesh_id):
     """Constructs a set of adjacent faces for each vertex.
     Returns a list of form
         [
-          [0] set([face_index_1, face_index_2, ...])
-          [1] set([face_index_1, ...])
-              ...
+          [0]: [face_index_1, face_index_2, ...]
+          [1]: [face_index_1, ...]
+               ...
         ]
     """
     vertices = rs.MeshVertices(mesh_id)
     face_vertices = rs.MeshFaceVertices(mesh_id)
-    adjacency_list = [set() for _ in xrange(len(vertices))]
-    for face_index in xrange(len(face_vertices)):
-        for vertex_index in face_vertices[face_index]:
-            adjacency_list[vertex_index].add(face_index)
+    adjacency_list = [[] for _ in xrange(len(vertices))]
+    face_planes = [rs.PlaneFitFromPoints(mu.get_face_points(mesh_id, face))
+                   for face in xrange(len(face_vertices))]
+    for next_face in xrange(len(face_vertices)):
+        for vertex_index in face_vertices[next_face]:
+            for face in adjacency_list[vertex_index]:
+                # NOTE(mikhaildubov): we have to check the face planes as well because
+                #                     of the way Rhinoceros works.
+                if (face == next_face or
+                    rs.PlanePlaneIntersection(face_planes[face], face_planes[next_face]) is None):
+                    break
+            else:
+                adjacency_list[vertex_index].append(next_face)
     return adjacency_list
 
     

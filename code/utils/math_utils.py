@@ -1,3 +1,5 @@
+from math import tan
+
 def solve_sle(A):
     """Solves a system of linear equations using the Gaussian elimination method.
     The system should be specified as an augmented matrix
@@ -55,5 +57,10 @@ def solve_sle(A):
             A[k][n] -= A[k][i] * x[i]
     return x
 
+
 def is_approx_zero(number):
     return abs(number) < 1e-3
+
+
+def cotan(angle):
+    return 1.0 / tan(angle)
